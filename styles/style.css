@@ -1,0 +1,32 @@
+body {
+  margin: 0;
+
+}
+
+.game-screen {
+  display: flex;
+  background-image: url("https://media.wired.com/photos/5a593a7ff11e325008172bc2/master/pass/pulsar-831502910.jpg");
+  background-size: cover;
+  align-items: center;
+  text-align: center;
+  width: 100vw;
+  height: 100vh;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+.game-screen p {
+  color: aliceblue;
+}
+
+.game-title{
+  font-size: 30px;
+  color: aliceblue;
+}
+
+.game-board{
+  display: none;
+}
+
+#start-button{
+  height: 30px;
+}
