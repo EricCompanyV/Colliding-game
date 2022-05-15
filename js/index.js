@@ -8,23 +8,46 @@ const bgImage = new Image();
 bgImage.src = "../images/pixel-art-stellar-background.jpg";
 const playerImg = new Image();
 playerImg.src = "../images/playerShip3_orange.png";
+const brownMeteorImage = new Image();
+brownMeteorImage.src = "../images/meteorBrown_big4.png";
 
 const playerHeight = 60;
 const playerWidth = 60;
 let playerX = canvas.width / 2 - playerWidth / 2;
 let playerY = canvas.height - 200;
 let playerSpeed = 3;
+let obstSpeed = 2;
+let obstW = 70;
+let obsHeight = 70;
 
 let playerIsGoingLeft = false;
 let playerIsGoingRight = false;
 let playerIsGoingUp = false;
 let playerIsGoingDown = false;
+let playerIsShooting = false
 
 let animationFrameId;
 let gameOver = false;
 
+let obstacles = [];
+
+class Obstacle {
+  constructor() {
+    this.width = obstW;
+    this.height = obsHeight;
+    this.speed = obstSpeed;
+    this.xPos = Math.floor(Math.random() * (canvas.width-this.width));
+    this.yPos = 0;
+  }
+
+  move() {
+    this.yPos += this.speed;
+  }
+}
+
 function drawPlayer() {
   ctx.drawImage(playerImg, playerX, playerY, playerWidth, playerHeight);
+  console.log("player printed");
   if (playerIsGoingLeft) {
     if (playerX > 0) {
       playerX -= playerSpeed;
@@ -37,7 +60,7 @@ function drawPlayer() {
   }
 
   if (playerIsGoingUp) {
-    if (playerY  > 0) {
+    if (playerY > 0) {
       playerY -= playerSpeed;
     }
   }
@@ -48,11 +71,56 @@ function drawPlayer() {
   }
 }
 
+function drawObstacle(obstacle) {
+  const { xPos, yPos, width, height } = obstacle; 
+  console.log(obstacle)
+
+  obstacle.move();
+
+  ctx.drawImage(brownMeteorImage, xPos, yPos, width, height);
+}
+
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
   drawPlayer();
-  animationFrameId = requestAnimationFrame(animate);
+  const nextObstacles = [];
+  obstacles.forEach((obstacle) => {
+    console.log("new obs");
+    if (
+      playerX < obstacle.xPos + obstacle.width &&
+      playerX + playerWidth > obstacle.xPos &&
+      playerY < obstacle.yPos + obstacle.height &&
+      playerHeight + playerY > obstacle.yPos
+    ) {
+      gameOver = true;
+      console.log("Collision!")
+    } 
+    
+
+    drawObstacle(obstacle);
+    if (obstacle.yPos > canvas.height + obstacle.yPos) {
+      nextObstacles.push(obstacle);
+
+      obstacles = nextObstacles;
+    }
+  });
+  
+  if (animationFrameId % 75 === 0) {
+    obstacles.push(new Obstacle());
+  }
+
+  if(animationFrameId % 500 == 0){
+    obstSpeed += 2
+    playerSpeed += 1
+    
+  }
+  if (gameOver) {
+    cancelAnimationFrame(animationFrameId);
+  } else {
+    console.log(animationFrameId);
+    animationFrameId = requestAnimationFrame(animate);
+  }
 }
 
 function startGame() {
@@ -79,11 +147,22 @@ window.addEventListener("load", () => {
     if (event.code === "ArrowDown") {
       playerIsGoingDown = true;
     }
+    if (event.code === "Space") {
+      playerIsShooting = true;
+    }
   });
   document.addEventListener("keyup", (event) => {
-    playerIsGoingLeft = false;
-    playerIsGoingRight = false;
-    playerIsGoingUp = false;
-    playerIsGoingDown = false;
+    if (event.code === "ArrowLeft") {
+      playerIsGoingLeft = false;
+    }
+    if (event.code === "ArrowRight") {
+      playerIsGoingRight = false;
+    }
+    if (event.code === "ArrowUp") {
+      playerIsGoingUp = false;
+    }
+    if (event.code === "ArrowDown") {
+      playerIsGoingDown = false;
+    }
   });
 });
