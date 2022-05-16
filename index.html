@@ -4,19 +4,36 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="shortcut icon"
+      href="../Ironhack-project1/images/playerShip3_orange.png"
+      type="image/x-icon"
+    />
     <link rel="stylesheet" href="styles/style.css" />
     <title>Colliding game</title>
   </head>
 
   <body>
     <div class="game-screen">
-      <div class="game-title" id="space-invaders-title">
+      <div class="game-start" id="space-invaders-title">
         <h1>Space Invaders</h1>
-        <p>Use the arrows to control your battleship and avoid any collision!</p>
+        <p>
+          Use the arrows to control your battleship and avoid any collision!
+        </p>
+        <button id="start-button">StartGame</button>
       </div>
-      <button id="start-button">StartGame</button>
+
       <!-- <div class="game-board">-->
-        <canvas id="canvas" width="700" height="700"></canvas>
+      <div class="running-game">
+        <div class="running-game-screen">
+          <canvas id="canvas" width="700" height="700"></canvas>
+          <div id="game-score">Score: 0</div>
+        </div>
+      </div>
+      <div class="game-over">
+        <div id="game-over-screen">GAME OVER --> THANKS FOR PLAYING</div>
+      </div>
+
       <!--</div>-->
     </div>
 

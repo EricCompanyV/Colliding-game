@@ -1,6 +1,5 @@
 body {
   margin: 0;
-
 }
 
 .game-screen {
@@ -11,22 +10,33 @@ body {
   text-align: center;
   width: 100vw;
   height: 100vh;
-  justify-content: flex-start;
-  flex-direction: column;
+  justify-content: center;
+  flex-direction: row;
 }
 .game-screen p {
   color: aliceblue;
 }
 
-.game-title{
+.game-start {
   font-size: 30px;
   color: aliceblue;
 }
 
-.game-board{
+.game-board {
   display: none;
 }
 
-#start-button{
+#start-button {
   height: 30px;
+}
+
+.running-game {
+  display: none;
+}
+.running-game-screen {
+  flex-direction: row;
+}
+.game-over {
+  display: none;
+  font: white
 }
