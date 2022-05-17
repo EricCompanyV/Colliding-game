@@ -11,7 +11,6 @@ body {
   width: 100vw;
   height: 100vh;
   justify-content: center;
-  flex-direction: row;
 }
 .game-screen p {
   color: aliceblue;
@@ -32,11 +31,30 @@ body {
 
 .running-game {
   display: none;
+  align-items: center;
+  height: 720px;
+  width: 720px
+
 }
-.running-game-screen {
-  flex-direction: row;
-}
+
 .game-over {
   display: none;
-  font: white
+  font: white;
+}
+
+.game {
+background-color: black;
+border: 50px;
+border-radius: 5%;
+}
+
+#canvas{
+  margin-top: 10px;
+  border-radius: 5%;
+}
+#game-score{
+  display: flex;
+  flex-direction: column;
+  
+  align-items: stretch;
 }

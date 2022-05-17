@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link
       rel="shortcut icon"
-      href="../Ironhack-project1/images/playerShip3_orange.png"
+      href="./images/playerShip3_orange.png"
       type="image/x-icon"
     />
     <link rel="stylesheet" href="styles/style.css" />
@@ -15,26 +15,39 @@
 
   <body>
     <div class="game-screen">
-      <div class="game-start" id="space-invaders-title">
-        <h1>Space Invaders</h1>
-        <p>
-          Use the arrows to control your battleship and avoid any collision!
-        </p>
-        <button id="start-button">StartGame</button>
-      </div>
-
-      <!-- <div class="game-board">-->
-      <div class="running-game">
-        <div class="running-game-screen">
-          <canvas id="canvas" width="700" height="700"></canvas>
-          <div id="game-score">Score: 0</div>
+      <!-- Starting screen -->
+      <div class="game-start">
+        <div id="space-invaders-title">
+          <h1>Space Invaders</h1>
+        </div>
+        <div>
+          <p>
+            Use the arrows to control your battleship and avoid any collision!
+          </p>
+        </div>
+        <div>
+          <button id="start-button">StartGame</button>
         </div>
       </div>
+
+      <!-- Game Board-->
+      <span class="running-game game">
+        <canvas id="canvas" width="700" height="700"></canvas>
+      </span>
+
+      <span class="score-display game" id="game-score">
+        
+            <span>Score: 0</span>
+            <span>Score: 1</span>
+            <span>Score: 2</span>
+          
+        </span>
+      </span>
+
+      <!--Game Over Screen-->
       <div class="game-over">
         <div id="game-over-screen">GAME OVER --> THANKS FOR PLAYING</div>
       </div>
-
-      <!--</div>-->
     </div>
 
     <script type="text/javascript" src="js/index.js"></script>
