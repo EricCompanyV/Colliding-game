@@ -32,6 +32,7 @@ const pauseScreenImage = new Image();
 pauseScreenImage.src = "./images/pause-screen.png";
 
 let gameAudio = new Audio();
+console.log({gameAudio})
 gameAudio.src = "./audio/running-game.mp3"
 gameAudio.volume = 0.1;
 
