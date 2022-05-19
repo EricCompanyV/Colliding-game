@@ -84,18 +84,30 @@ body {
   width: 370px;
   display: none;
   flex-direction: column;
+  justify-content: space-between;
 }
 #game-score > span {
-  margin-bottom: 35px;
   border: 200px;
   border-radius: 20%;
   background-color: white;
   text-align: center;
-  padding: 47px;
+}
+
+.display-div {
+  background-color: rgb(32, 28, 52);
+  border: 5px;
+  margin: 5px;
+  border-radius: 20%;
+}
+.display-div > h2 {
+  margin: 0px;
+  color: white;
+  border: 5px;
+  border-radius: 5%;
 }
 
 #legend-span {
-  padding-right: 20px;
+  height:115px;
 }
 #legend-span > img {
   width: 320px;

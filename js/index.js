@@ -1,3 +1,4 @@
+// DOM elements
 const canvas = document.getElementById("canvas");
 const gameIntro = document.querySelector(".game-start");
 const runningGame = document.querySelector(".running-game");
@@ -7,7 +8,12 @@ const ctx = canvas.getContext("2d");
 const startGameBtn = document.getElementById("start-button");
 const gameOverScreen = document.querySelector(".game-over");
 const restartBtn = document.getElementById("restart-button");
+const gameScore = document.getElementById("score");
+const gameLevel = document.getElementById("level");
+const maxScore = document.getElementById("maximum-score");
+const finalScore = document.getElementById("final-score");
 
+// Images 
 const bgImage = new Image();
 bgImage.src = "./images/pixel-art-stellar-background.jpg";
 const playerImage = new Image();
@@ -31,11 +37,24 @@ enemyImage.src = "./images/enemyBlue2.png";
 const pauseScreenImage = new Image();
 pauseScreenImage.src = "./images/pause-screen.png";
 
+//Audios
 let gameAudio = new Audio();
-console.log({gameAudio})
-gameAudio.src = "./audio/running-game.mp3"
+gameAudio.src = "./audio/Running-game.mp3";
 gameAudio.volume = 0.1;
+let laserShot = new Audio();
+laserShot.src = "./audio/laserShot.mp3";
+laserShot.volume = 0.025;
+let explodeSound = new Audio();
+explodeSound.volume = 0.2;
+explodeSound.src = "./audio/explosion.mp3";
+let startAudio = new Audio();
+startAudio.src = "./audio/startAudio.mp3";
+startAudio.volume = 0.15;
+let restartAudio = new Audio();
+restartAudio.src = "./audio/restartAudio.mp3";
+restartAudio.volume = 0.1;
 
+// Variables 
 const playerHeight = 60;
 const playerWidth = 60;
 let playerX = canvas.width / 2 - playerWidth / 2;
@@ -50,6 +69,7 @@ let playerIsShooting = false;
 let playerIsBubbled = false;
 let pauseGame = true;
 let gamePaused = false;
+let muteGame = false;
 
 let obstacles = [];
 let obstWidth = 70;
@@ -76,7 +96,10 @@ let animationFrameId;
 let pauseFrameId;
 let gameOver = false;
 let score = 0;
+let currentLevel = 1;
+let maximumScore = 0;
 
+// Classes
 class Player {
   constructor() {
     this.xPos = playerX;
@@ -146,6 +169,7 @@ class Enemy {
   }
 }
 
+// Functions
 function drawPlayer() {
   ctx.drawImage(
     playerImage,
@@ -155,9 +179,7 @@ function drawPlayer() {
     player.height
   );
   if (playerIsBubbled) {
-    console.log("burbujas");
     ctx.beginPath();
-    //ctx.moveTo(player.xPos + player.width / 2, player.YPos + playerHeight / 2);
     ctx.arc(
       player.xPos + player.width / 2,
       player.yPos + player.height / 2,
@@ -205,7 +227,7 @@ function collision(a, b) {
     a.yPos < b.yPos + b.height &&
     a.height + a.yPos > b.yPos
   ) {
-    // ¡colision detected!
+    explodeSound.play();
     collisionChecked = true;
   }
   return collisionChecked;
@@ -213,6 +235,7 @@ function collision(a, b) {
 
 function damagePlayer(player, objectCollidedWith) {
   objectCollidedWith.destroyed = true;
+  explodeSound.play();
   if (!playerIsBubbled) {
     player.health -= 1;
     if (player.health === 0) {
@@ -223,12 +246,13 @@ function damagePlayer(player, objectCollidedWith) {
 
 function objectDestruction(object, missile) {
   if (collision(object, missile)) {
+    explodeSound.play();
     object.destroyed = true;
     missile.destroyed = true;
     if (object.chanceToDrop > 75) {
       drops.push(new Drop(object.xPos, object.yPos));
     }
-    score += 10;
+    score += 100 + currentLevel * 25;
   }
 }
 
@@ -245,9 +269,30 @@ function restartGame() {
   gravity = 2;
   animationFrameId = 0;
   playerSpeed = 3;
+  currentLevel = 1;
+  score = 0;
+  gameAudio.currentTime = 0;
+  restartAudio.pause();
+  restartAudio.currentTime = 0;
   startGame();
 }
 
+function updateVisuals() {
+  gameScore.innerHTML = score;
+  gameLevel.innerHTML = currentLevel;
+}
+
+function toggleMuteGame() {
+  if (muteGame) {    
+    gameAudio.volume = 0;
+    startAudio.volume = 0;
+    restartAudio.volume = 0;
+  } else {
+    gameAudio.volume = 0.1;
+    startAudio.volume = 0.15;
+    restartAudio.volume = 0.1;
+  }
+}
 function drawObstacle(obstacle) {
   const { xPos, yPos, width, height } = obstacle;
 
@@ -362,10 +407,10 @@ function animate() {
   });
 
   drops = nextDrops;
-  if (animationFrameId % 50 === 0) {
+  if (animationFrameId % (50 - currentLevel * 5) === 0) {
     obstacles.push(new Obstacle());
   }
-  if (animationFrameId % enemyRandomSpawn === 0) {
+  if (animationFrameId % (enemyRandomSpawn - currentLevel * 5) === 0) {
     enemys.push(new Enemy());
     enemyRandomSpawn = 50 + Math.floor(Math.random() * 70);
   }
@@ -376,32 +421,41 @@ function animate() {
       laserInCooldown = false;
     }, 350);
     missiles.push(new Missile(player.xPos, playerWidth, player.yPos, -1));
+    laserShot.play();
   }
 
   if (animationFrameId % 500 == 0) {
     gravity += 2;
     playerSpeed += 1;
+    currentLevel += 1;
   }
+
+  updateVisuals();
 
   if (gameOver) {
     cancelAnimationFrame(animationFrameId);
-
-    // gameAudio.loop=false
-
     gameAudio.pause();
+    restartAudio.play();
+    restartAudio.loop = true;
+    if (score > maxScore.innerHTML) {
+      maxScore.innerHTML = score;
+    }
+    finalScore.innerHTML = score;
     runningGame.style.display = "none";
     scoreBoard.style.display = "none";
     gameOverScreen.style.display = "flex";
     restartBtn.style.display = "flex";
   } else if (pauseGame) {
-    gameAudio.play()
-    gameAudio.loop=true
+    gameAudio.play();
+    gameAudio.loop = true;
     animationFrameId = requestAnimationFrame(animate);
   }
 }
 
 function startGame() {
+  startAudio.pause();
   gameAudio.play();
+
   gameAudio.loop = true;
   gameIntro.style.display = "none";
   runningGame.style.display = "block";
@@ -414,7 +468,10 @@ function drawPauseScreen() {
   ctx.drawImage(pauseScreenImage, 200, 200, 300, 300);
 }
 
+// Events
 window.addEventListener("load", () => {
+  startAudio.play();
+  startAudio.loop = true;
   startGameBtn.addEventListener("click", () => {
     startGame();
   });
@@ -443,12 +500,14 @@ window.addEventListener("load", () => {
         cancelAnimationFrame(pauseFrameId);
         animate();
       } else if (!pauseGame) {
-        
         gameAudio.pause();
-        console.log("paused");
 
         pauseFrameId = requestAnimationFrame(drawPauseScreen);
       }
+    }
+    if (event.code === "KeyM") {
+      muteGame = !muteGame;
+      toggleMuteGame();
     }
   });
   document.addEventListener("keyup", (event) => {
