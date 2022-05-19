@@ -17,13 +17,22 @@
     <div class="game-screen">
       <!-- Starting screen -->
       <div class="game-start">
-        <div id="space-invaders-title">
-          <h1>Space Invaders</h1>
+        <div class="space-invaders-title">
+          <div class="container-start">
+            <h1>Space Invaders</h1>
+          </div>
         </div>
-        <div>
-          <p>
-            Use the arrows to control your battleship and avoid any collision!
-          </p>
+        <div class="space-invaders-title">
+          <div class="container-start">
+            <p class="start-explanation">
+              Use the arrows to control your battleship and avoid any collision!
+            </p>
+            <p class="start-explanation">
+              Shoot with spacebar
+            </p>
+            <p class="start-explanation">Pause/resume with escape</p>
+            <p class="start-explanation">Try to chatch any drops from enemy ships or asteroids.</p>
+          </div>
         </div>
         <div>
           <button id="start-button">StartGame</button>
@@ -57,12 +66,21 @@
           </div>
         </div>
         <div>
-          <span class="final-score">
-            <div></div>
+          <span>
+            <div class="final-score">
+              <span class="container">
+                <h2>Score:</h2>
+                <h2 id="score">0</h2>
+              </span>
+              <span class="container">
+                <h2>Maximum score:</h2>
+                <h2 id="score">0</h2>
+              </span>
+            </div>
           </span>
         </div>
         <div class="restart-game">
-          <button id="restart-button">RestartGame</button>
+          <button id="restart-button">Restart Game</button>
         </div>
       </div>
     </div>

@@ -12,13 +12,39 @@ body {
   height: 100vh;
   justify-content: center;
 }
-.game-screen p {
-  color: aliceblue;
-}
 
 .game-start {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 80%;
+  width: 100%;
+}
+
+.space-invaders-title {
+  width: 1000px;
+  border: 50px;
+  margin: 5px;
+  border-radius: 5%;
+  border-color: white;
+  background-color: white;
+  width:50%
+}
+
+.container-start{
+  margin:5px;
+  border-radius: 7%;
+  background-color: rgb(32, 28, 52);
+  color: white;
   font-size: 30px;
-  color: aliceblue;
+}
+.container-start > h1{
+  margin: 5px;
+}
+
+.start-explanation{
+  margin:5px;
 }
 
 .game-board {
@@ -27,6 +53,7 @@ body {
 
 #start-button {
   height: 30px;
+  margin-top: 20px;
 }
 
 .running-game {
@@ -73,13 +100,14 @@ body {
 #legend-span > img {
   width: 320px;
 }
-.game-over  {
+.game-over {
   height: 350px;
   width: 400px;
   margin-bottom: 100px;
   background-color: white;
   border: 50px;
   border-radius: 5%;
+  border-color: white;
 }
 
 .game-over-screen > img {
@@ -89,9 +117,31 @@ body {
   border-radius: 5%;
 }
 .restart-game {
-  display:flex;
+  display: flex;
   justify-content: center;
 }
 #restart-button {
   display: none;
+}
+.final-score {
+  display: flex;
+  justify-content: space-evenly;
+  height: 150px;
+  width: 400px;
+  margin-top: 25px;
+  margin-bottom: 25px;
+  border: 50px;
+  border-radius: 5%;
+  border-color: white;
+  background-color: white;
+}
+
+.container {
+  margin: 5px;
+  height: 35;
+  width: 100%;
+  border: 5px;
+  border-radius: 5%;
+  background-color: rgb(32, 28, 52);
+  color: white;
 }
