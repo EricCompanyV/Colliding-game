@@ -35,18 +35,35 @@
         <canvas id="canvas" width="700" height="700"></canvas>
       </span>
 
-      <span class="score-display game" id="game-score">
-        
-            <span>Score: 0</span>
-            <span>Score: 1</span>
-            <span>Score: 2</span>
-          
+      <div class="score-display" id="game-score">
+        <span id="score-span">
+          <h2>Score:</h2>
+          <h2 id="score">0</h2>
         </span>
-      </span>
+        <span id="level-span">
+          <h2>Level:</h2>
+          <h2 id="level">1</h2></span
+        >
+        <span id="legend-span">
+          <img src="./images/legend-image.png" />
+        </span>
+      </div>
 
       <!--Game Over Screen-->
       <div class="game-over">
-        <div id="game-over-screen">GAME OVER --> THANKS FOR PLAYING</div>
+        <div>
+          <div class="game-over-screen">
+            <img src="./images/gameover3.jpg" />
+          </div>
+        </div>
+        <div>
+          <span class="final-score">
+            <div></div>
+          </span>
+        </div>
+        <div class="restart-game">
+          <button id="restart-button">RestartGame</button>
+        </div>
       </div>
     </div>
 

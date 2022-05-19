@@ -1,10 +1,12 @@
 const canvas = document.getElementById("canvas");
 const gameIntro = document.querySelector(".game-start");
 const runningGame = document.querySelector(".running-game");
+const scoreBoard = document.querySelector(".score-display");
 const titleText = document.getElementById("space-invaders-title");
 const ctx = canvas.getContext("2d");
 const startGameBtn = document.getElementById("start-button");
 const gameOverScreen = document.querySelector(".game-over");
+const restartBtn = document.getElementById("restart-button");
 
 const bgImage = new Image();
 bgImage.src = "../images/pixel-art-stellar-background.jpg";
@@ -24,6 +26,13 @@ const speedPlusDrop = new Image();
 speedPlusDrop.src = "../images/pill_yellow.png";
 const shieldPlusDrop = new Image();
 shieldPlusDrop.src = "../images/pill_blue.png";
+const enemyImage = new Image();
+enemyImage.src = "../images/enemyBlue2.png";
+const pauseScreenImage = new Image();
+pauseScreenImage.src = "../images/pause-screen.png";
+
+let gameAudio = new Audio("../audio/running game audio.mp3");
+gameAudio.volume = 0.2;
 
 const playerHeight = 60;
 const playerWidth = 60;
@@ -37,8 +46,8 @@ let playerIsGoingUp = false;
 let playerIsGoingDown = false;
 let playerIsShooting = false;
 let playerIsBubbled = false;
-let pauseGame = true
-let gamePaused = false
+let pauseGame = true;
+let gamePaused = false;
 
 let obstacles = [];
 let obstWidth = 70;
@@ -56,7 +65,13 @@ let dropWidth = 22;
 let dropHeight = 20;
 let dropSpeed = gravity;
 
+let enemys = [];
+let enemWidth = 50;
+let enemHeight = 50;
+let enemyRandomSpawn = 35 + Math.floor(Math.random() * 55);
+
 let animationFrameId;
+let pauseFrameId;
 let gameOver = false;
 let score = 0;
 
@@ -78,7 +93,7 @@ class Obstacle {
     this.xPos = Math.floor(Math.random() * (canvas.width - this.width));
     this.yPos = 0;
     this.destroyed = false;
-    this.chanceToDrop = 1 + Math.floor(Math.random() * 100);
+    this.chanceToDrop = 1 + Math.floor(Math.random() * 99);
   }
   move() {
     this.yPos += this.speed;
@@ -86,16 +101,17 @@ class Obstacle {
 }
 
 class Missile {
-  constructor() {
+  constructor(xPos, xWidth, yPos, direction) {
     this.width = missileWidth;
     this.height = missileHeight;
     this.speed = missileSpeed;
-    this.xPos = player.xPos + player.width / 2;
-    this.yPos = player.yPos - 10;
+    this.xPos = xPos + xWidth / 2;
+    this.yPos = yPos + 10 * direction;
     this.destroyed = false;
+    this.direction = direction;
   }
   move() {
-    this.yPos -= this.speed;
+    this.yPos += this.direction * this.speed;
   }
 }
 
@@ -113,6 +129,21 @@ class Drop {
     this.yPos += this.speed;
   }
 }
+class Enemy {
+  constructor() {
+    this.width = enemWidth;
+    this.height = enemHeight;
+    this.speed = gravity * 1.05;
+    this.xPos = Math.floor(Math.random() * (canvas.width - this.width));
+    this.yPos = 0;
+    this.destroyed = false;
+    this.chanceToDrop = 1 + Math.floor(Math.random() * 100);
+  }
+  move() {
+    this.yPos += this.speed;
+  }
+}
+
 function drawPlayer() {
   ctx.drawImage(
     playerImage,
@@ -122,21 +153,20 @@ function drawPlayer() {
     player.height
   );
   if (playerIsBubbled) {
-    console.log("here comes da bubbles");
+    console.log("burbujas");
     ctx.beginPath();
-    ctx.moveTo(player.xPos, player.YPos);
+    //ctx.moveTo(player.xPos + player.width / 2, player.YPos + playerHeight / 2);
     ctx.arc(
       player.xPos + player.width / 2,
-      player.YPos + playerHeight / 2,
+      player.yPos + player.height / 2,
       40,
       0,
-      2 * Math.PI,
-      false
+      2 * Math.PI
     );
-    ctx.fillStyle = "lime";
     ctx.lineWidth = 5;
     ctx.strokeStyle = "blue";
     ctx.stroke();
+    ctx.closePath();
   }
   for (let i = 0; i < player.health; i += 1) {
     ctx.drawImage(lifeImage, 20 * i, 0, 50, 50);
@@ -179,6 +209,43 @@ function collision(a, b) {
   return collisionChecked;
 }
 
+function damagePlayer(player, objectCollidedWith) {
+  objectCollidedWith.destroyed = true;
+  if (!playerIsBubbled) {
+    player.health -= 1;
+    if (player.health === 0) {
+      gameOver = true;
+    }
+  }
+}
+
+function objectDestruction(object, missile) {
+  if (collision(object, missile)) {
+    object.destroyed = true;
+    missile.destroyed = true;
+    if (object.chanceToDrop > 75) {
+      drops.push(new Drop(object.xPos, object.yPos));
+    }
+    score += 10;
+  }
+}
+
+function restartGame() {
+  player.xPos = playerX;
+  player.yPos = playerY;
+  player.health = 3;
+  player;
+  obstacles = [];
+  missiles = [];
+  drops = [];
+  enemys = [];
+  gameOver = false;
+  gravity = 2;
+  animationFrameId = 0;
+  playerSpeed = 3;
+  startGame();
+}
+
 function drawObstacle(obstacle) {
   const { xPos, yPos, width, height } = obstacle;
 
@@ -198,7 +265,6 @@ function drawDrop(drop) {
   const { xPos, yPos, width, height } = drop;
 
   drop.move();
-  console.log("drawing drop");
   switch (drop.category) {
     case 1:
       ctx.drawImage(lifePlusDrop, xPos, yPos, width, height);
@@ -212,6 +278,12 @@ function drawDrop(drop) {
   }
 }
 
+function drawEnemy(enemy) {
+  const { xPos, yPos, width, height } = enemy;
+  enemy.move();
+  ctx.drawImage(enemyImage, xPos, yPos, width, height);
+}
+
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
@@ -219,21 +291,10 @@ function animate() {
   const nextObstacles = [];
   obstacles.forEach((obstacle) => {
     if (collision(obstacle, player)) {
-      obstacle.destroyed = true;
-      player.health -= 1;
-      if (player.health === 0) {
-        gameOver = true;
-      }
+      damagePlayer(player, obstacle);
     }
     missiles.forEach((missile) => {
-      if (collision(obstacle, missile)) {
-        obstacle.destroyed = true;
-        missile.destroyed = true;
-        if (obstacle.chanceToDrop > 75) {
-          drops.push(new Drop(obstacle.xPos, obstacle.yPos));
-        }
-        score += 10;
-      }
+      objectDestruction(obstacle, missile);
     });
     if (
       obstacle.yPos < canvas.height + obstacle.height &&
@@ -245,6 +306,21 @@ function animate() {
   });
   obstacles = nextObstacles;
 
+  const nextEnemys = [];
+  enemys.forEach((enemy) => {
+    if (collision(enemy, player)) {
+      damagePlayer(player, enemy);
+    }
+    missiles.forEach((missile) => {
+      objectDestruction(enemy, missile);
+    });
+    if (enemy.yPos < canvas.height + enemy.height && !enemy.destroyed) {
+      nextEnemys.push(enemy);
+      drawEnemy(enemy);
+    }
+  });
+  enemys = nextEnemys;
+
   const nextMissiles = [];
   missiles.forEach((missile) => {
     if (missile.yPos > 0 - missile.height && !missile.destroyed) {
@@ -252,7 +328,6 @@ function animate() {
       drawMissile(missile);
     }
   });
-
   missiles = nextMissiles;
 
   const nextDrops = [];
@@ -285,8 +360,12 @@ function animate() {
   });
 
   drops = nextDrops;
-  if (animationFrameId % 75 === 0) {
+  if (animationFrameId % 50 === 0) {
     obstacles.push(new Obstacle());
+  }
+  if (animationFrameId % enemyRandomSpawn === 0) {
+    enemys.push(new Enemy());
+    enemyRandomSpawn = 50 + Math.floor(Math.random() * 70);
   }
 
   if (playerIsShooting && !laserInCooldown) {
@@ -294,34 +373,51 @@ function animate() {
     setTimeout(() => {
       laserInCooldown = false;
     }, 350);
-    missiles.push(new Missile());
+    missiles.push(new Missile(player.xPos, playerWidth, player.yPos, -1));
   }
 
   if (animationFrameId % 500 == 0) {
     gravity += 2;
     playerSpeed += 1;
   }
-  
-  console.log(pauseGame)
+
   if (gameOver) {
     cancelAnimationFrame(animationFrameId);
+
+    // gameAudio.loop=false
+
+    gameAudio.pause();
     runningGame.style.display = "none";
-    gameOverScreen.style.display = "block";
-  } else if(pauseGame) {
+    scoreBoard.style.display = "none";
+    gameOverScreen.style.display = "flex";
+    restartBtn.style.display = "flex";
+  } else if (pauseGame) {
+    gameAudio.play()
+  gameAudio.loop=true
     animationFrameId = requestAnimationFrame(animate);
   }
 }
 
 function startGame() {
+  gameAudio.play();
+  gameAudio.loop = true;
   gameIntro.style.display = "none";
   runningGame.style.display = "block";
-
+  scoreBoard.style.display = "flex";
+  gameOverScreen.style.display = "none";
   animate();
+}
+
+function drawPauseScreen() {
+  ctx.drawImage(pauseScreenImage, 200, 200, 300, 300);
 }
 
 window.addEventListener("load", () => {
   startGameBtn.addEventListener("click", () => {
     startGame();
+  });
+  restartBtn.addEventListener("click", () => {
+    restartGame();
   });
   document.addEventListener("keydown", (event) => {
     if (event.code === "ArrowLeft") {
@@ -341,8 +437,15 @@ window.addEventListener("load", () => {
     }
     if (event.code === "Escape") {
       pauseGame = !pauseGame;
-      if(pauseGame){
-        animate()
+      if (pauseGame) {
+        cancelAnimationFrame(pauseFrameId);
+        animate();
+      } else if (!pauseGame) {
+        
+        gameAudio.pause();
+        console.log("paused");
+
+        pauseFrameId = requestAnimationFrame(drawPauseScreen);
       }
     }
   });
