@@ -295,22 +295,18 @@ function toggleMuteGame() {
 }
 function drawObstacle(obstacle) {
   const { xPos, yPos, width, height } = obstacle;
-
   obstacle.move();
-
   ctx.drawImage(brownMeteorImage, xPos, yPos, width, height);
 }
 
 function drawMissile(missile) {
   const { xPos, yPos, width, height } = missile;
-
   missile.move();
   ctx.drawImage(missileImage, xPos, yPos, width, height);
 }
 
 function drawDrop(drop) {
   const { xPos, yPos, width, height } = drop;
-
   drop.move();
   switch (drop.category) {
     case 1:
