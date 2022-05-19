@@ -31,7 +31,7 @@ enemyImage.src = "./images/enemyBlue2.png";
 const pauseScreenImage = new Image();
 pauseScreenImage.src = "./images/pause-screen.png";
 
-let gameAudio = new Audio("./audio/running game audio.mp3");
+let gameAudio = new Audio("../audio/running game audio.mp3");
 gameAudio.volume = 0.1;
 
 const playerHeight = 60;
@@ -393,7 +393,7 @@ function animate() {
     restartBtn.style.display = "flex";
   } else if (pauseGame) {
     gameAudio.play()
-  gameAudio.loop=true
+    gameAudio.loop=true
     animationFrameId = requestAnimationFrame(animate);
   }
 }
