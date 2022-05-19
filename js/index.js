@@ -31,7 +31,8 @@ enemyImage.src = "./images/enemyBlue2.png";
 const pauseScreenImage = new Image();
 pauseScreenImage.src = "./images/pause-screen.png";
 
-let gameAudio = new Audio("./audio/running-game.mp3");
+let gameAudio = new Audio();
+gameAudio.src = "./audio/running-game.mp3"
 gameAudio.volume = 0.1;
 
 const playerHeight = 60;
