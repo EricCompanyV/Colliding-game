@@ -70,6 +70,7 @@ let playerIsBubbled = false;
 let pauseGame = true;
 let gamePaused = false;
 let muteGame = false;
+let muteEffectSounds = false
 
 let obstacles = [];
 let obstWidth = 70;
@@ -300,6 +301,16 @@ function toggleMuteGame() {
     restartAudio.volume = 0.1;
   }
 }
+
+function toggleMuteEffectSounds() {
+  if (muteEffectSounds) {
+    laserShot.volume = 0;
+    explodeSound.volume = 0;
+  } else {
+    laserShot.volume = 0.025;
+    explodeSound.volume = 0.2;
+  }
+}
 function drawObstacle(obstacle) {
   const { xPos, yPos, width, height } = obstacle;
   obstacle.move();
@@ -482,16 +493,16 @@ window.addEventListener("load", () => {
     restartGame();
   });
   document.addEventListener("keydown", (event) => {
-    if (event.code === "ArrowLeft") {
+    if (event.code === "ArrowLeft" || event.code === "KeyA") {
       playerIsGoingLeft = true;
     }
-    if (event.code === "ArrowRight") {
+    if (event.code === "ArrowRight" || event.code === "KeyD") {
       playerIsGoingRight = true;
     }
-    if (event.code === "ArrowUp") {
+    if (event.code === "ArrowUp" || event.code === "KeyW") {
       playerIsGoingUp = true;
     }
-    if (event.code === "ArrowDown") {
+    if (event.code === "ArrowDown" || event.code === "KeyS") {
       playerIsGoingDown = true;
     }
     if (event.code === "Space") {
@@ -512,18 +523,22 @@ window.addEventListener("load", () => {
       muteGame = !muteGame;
       toggleMuteGame();
     }
+    if (event.code === "KeyE") {
+      muteEffectSounds = !muteEffectSounds;
+      toggleMuteEffectSounds();
+    }
   });
   document.addEventListener("keyup", (event) => {
-    if (event.code === "ArrowLeft") {
+    if (event.code === "ArrowLeft" || event.code === "KeyA") {
       playerIsGoingLeft = false;
     }
-    if (event.code === "ArrowRight") {
+    if (event.code === "ArrowRight" || event.code === "KeyD") {
       playerIsGoingRight = false;
     }
-    if (event.code === "ArrowUp") {
+    if (event.code === "ArrowUp" || event.code === "KeyW") {
       playerIsGoingUp = false;
     }
-    if (event.code === "ArrowDown") {
+    if (event.code === "ArrowDown" || event.code === "KeyS") {
       playerIsGoingDown = false;
     }
     if (event.code === "Space") {
