@@ -452,6 +452,7 @@ function animate() {
     gameAudio.loop = true;
     animationFrameId = requestAnimationFrame(animate);
   }
+  console.log(animationFrameId)
 }
 
 function startGame() {

@@ -55,5 +55,20 @@ Methods:
 
 
 ## Task
-_List of tasks in order of priority_
+- Create HTML
+- Create JS
+- Create CSS
+- Create background and player
+- Player movement 
+- Create obstacles
+- Obstacles movement
+- Collision between obstacles and player
+- Missiles creation and movement
+- Missiles collision with obstacles
+- Create drops on object with missile collition
+- Collision between drop and player
+- Power-ups based on drop
+- Create different kinds of enemies
+
+
 
