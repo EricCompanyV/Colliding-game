@@ -266,7 +266,7 @@ function restartGame() {
   enemys = [];
   gameOver = false;
   gravity = 2;
-  animationFrameId = 0;
+  animationFrameId = 1;
   playerSpeed = 3;
   currentLevel = 1;
   score = 0;
