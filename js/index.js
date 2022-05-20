@@ -13,7 +13,7 @@ const gameLevel = document.getElementById("level");
 const maxScore = document.getElementById("maximum-score");
 const finalScore = document.getElementById("final-score");
 
-// Images 
+// Images
 const bgImage = new Image();
 bgImage.src = "./images/pixel-art-stellar-background.jpg";
 const playerImage = new Image();
@@ -39,7 +39,7 @@ pauseScreenImage.src = "./images/pause-screen.png";
 
 //Audios
 let gameAudio = new Audio();
-gameAudio.src = "./audio/Running-game.mp3";
+gameAudio.src = "./audio/running-game.mp3";
 gameAudio.volume = 0.1;
 let laserShot = new Audio();
 laserShot.src = "./audio/laserShot.mp3";
@@ -54,7 +54,7 @@ let restartAudio = new Audio();
 restartAudio.src = "./audio/restartAudio.mp3";
 restartAudio.volume = 0.1;
 
-// Variables 
+// Variables
 const playerHeight = 60;
 const playerWidth = 60;
 let playerX = canvas.width / 2 - playerWidth / 2;
@@ -90,7 +90,6 @@ let dropSpeed = gravity;
 let enemys = [];
 let enemWidth = 50;
 let enemHeight = 50;
-let enemyRandomSpawn = 35 + Math.floor(Math.random() * 55);
 
 let animationFrameId;
 let pauseFrameId;
@@ -277,13 +276,21 @@ function restartGame() {
   startGame();
 }
 
+function randomSpawnByLevel(n) {
+  if (currentLevel <= 10) {
+    return 50 - currentLevel * 5 + n;
+  } else {
+    return 2+n;
+  }
+}
+
 function updateVisuals() {
   gameScore.innerHTML = score;
   gameLevel.innerHTML = currentLevel;
 }
 
 function toggleMuteGame() {
-  if (muteGame) {    
+  if (muteGame) {
     gameAudio.volume = 0;
     startAudio.volume = 0;
     restartAudio.volume = 0;
@@ -403,12 +410,11 @@ function animate() {
   });
 
   drops = nextDrops;
-  if (animationFrameId % (50 - currentLevel * 5) === 0) {
+  if (animationFrameId % randomSpawnByLevel(2) === 0) {
     obstacles.push(new Obstacle());
   }
-  if (animationFrameId % (enemyRandomSpawn - currentLevel * 5) === 0) {
+  if (animationFrameId % randomSpawnByLevel(3) === 0) {
     enemys.push(new Enemy());
-    enemyRandomSpawn = 50 + Math.floor(Math.random() * 70);
   }
 
   if (playerIsShooting && !laserInCooldown) {
@@ -420,7 +426,7 @@ function animate() {
     laserShot.play();
   }
 
-  if (animationFrameId % 500 == 0) {
+  if (animationFrameId % 400 == 0) {
     gravity += 2;
     playerSpeed += 1;
     currentLevel += 1;
